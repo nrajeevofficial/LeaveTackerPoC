@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+// Stlyed Component CSS
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -111,14 +112,20 @@ const SignUp: React.FC = () => {
       );
       return;
     }
-
+    // Confirm Password Validation
     if (userData.password !== userData.confirmPassword) {
       setConfirmPasswordError("Passwords do not match.");
       return;
     }
-
+    // Mobile Number Validation
     if (!userData.mobileNumber) {
       setMobileNumberError("Please enter your mobile number.");
+      return;
+    } else if (
+      userData.mobileNumber.length < 10 ||
+      userData.mobileNumber.length > 15
+    ) {
+      setMobileNumberError("Mobile number should be between 10 and 15 digits.");
       return;
     }
 
@@ -130,17 +137,17 @@ const SignUp: React.FC = () => {
         "Content-Type": "application/json",
       },
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to create account.");
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         // Account created successfully, redirect to /home page or handle navigation
-        navigate("/home");
+        navigate("/home", { state: { userData: data } });
       })
-      .catch(error => {
+      .catch((error) => {
         // Handle error, show error message
         console.error("Error creating account:", error);
       });

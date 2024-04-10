@@ -1,5 +1,4 @@
-import React from "react";
-import './App.css';
+import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./components/homepage/Home";
 import ApplyLeave from "./components/leaveForm/ApplyLeaveForm";
@@ -16,8 +15,8 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/applyleave" element={<ApplyLeave />} />
             <Route path="/holidaylist" element={<Holidays />} />
-            <Route path="/" element={<SignIn/>} />
-            <Route path="/signUp" element={<SignUp/>} />
+            <Route path="/" element={<SignIn />} />
+            <Route path="/signUp" element={<SignUp />} />
           </>
         </Routes>
       </Router>

@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { useNavigate } from "react-router-dom";
 
+// Styled components
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -43,30 +43,27 @@ const ErrorMessage = styled.span`
 `;
 
 const Button = styled.button`
-  width: 65%;
+  width: 45%;
   padding: 0.5rem;
   background-color: #007bff;
   border: none;
   color: white;
   border-radius: 0.25rem;
+  margin-top: 1rem;
 `;
 
-// Styled Link component for SignUp button
-const SignUpLink = styled(Link)`
-  text-decoration: none;
-  color: white;
-  background-color: #28a745; // Green color for SignUp button
-  padding: 0.5rem;
-  border: none;
-  border-radius: 0.25rem;
-  margin-top: 1rem;
-  display: inline-block;
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 106%;
 `;
 
 function SignIn() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [userName, setUserName] = useState<string>("");
   useEffect(() => {
+    // Get user's first name from localStorage and set it as userName
     const signedUpUser = localStorage.getItem("name");
     if (signedUpUser) {
       const firstName = signedUpUser.split(" ")[0];
@@ -80,19 +77,22 @@ function SignIn() {
   const [passwordError, setPasswordError] = useState<string>("");
 
   const handleSignIn = () => {
+    // Clear previous error messages
     setEmailError("");
     setPasswordError("");
 
+    // Get input values
     const emailValue = email.current?.value.trim() || "";
     const passwordValue = password.current?.value.trim() || "";
 
-    // Email validation
+    // Email validation using regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailValue)) {
       setEmailError("Please enter a valid email address.");
       return;
     }
 
+    // Password validation
     if (passwordValue.length < 6) {
       setPasswordError("Password must be at least 6 characters long.");
       return;
@@ -106,16 +106,21 @@ function SignIn() {
         "Content-Type": "application/json",
       },
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error("User Not Found, please SignUp");
         }
-        navigate("/home")
+        navigate("/home");
       })
-      .catch(error => {
+      .catch((error) => {
         // Handle error, show error message
         setPasswordError(error.message);
       });
+  };
+
+  const handleSignUp = () => {
+    // Navigate to SignUp page
+    navigate("/signUp");
   };
 
   return (
@@ -123,16 +128,24 @@ function SignIn() {
       <Container>
         <Card>
           <Title>LogIn</Title>
+
           <FormGroup>
             <Input placeholder="Email" type="text" ref={email} />
+
             {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
           </FormGroup>
+
           <FormGroup>
             <Input placeholder="Password" type="password" ref={password} />
+
             {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
           </FormGroup>
-          <Button onClick={handleSignIn}>Log In</Button>
-          <SignUpLink to="/signup">Sign Up</SignUpLink> {/* SignUp button */}
+
+          <ButtonContainer>
+            <Button onClick={handleSignIn}>Log In</Button>
+
+            <Button onClick={handleSignUp}>Sign Up</Button>
+          </ButtonContainer>
         </Card>
       </Container>
     </>

@@ -47,14 +47,17 @@ const CustomSpan = styled.span`
 const StyledTableCell = styled(MuiTableCell)`
   && {
     font-family: "Poppins", sans-serif !important;
-    /* Add other styles as needed */
   }
 `;
 
 const StyledTableRow = styled(MuiTableRow)`
   && {
-    /* Add styles as needed */
   }
+`;
+
+const StyledCard = styled(Card)`
+  text-align: center;
+  background-color: #ede7f6 !important;
 `;
 
 const CompOffLeave: React.FC<CompOffLeaveProps> = (props) => {
@@ -69,7 +72,7 @@ const CompOffLeave: React.FC<CompOffLeaveProps> = (props) => {
       <GlobalStyles />
       <div className="row" onClick={redirectToApplyLeave}>
         <div className="col-sm-12">
-          <Card className="text-center">
+          <StyledCard>
             <CardContent>
               <CustomTypography variant="h6" gutterBottom>
                 Compensatory Off
@@ -94,7 +97,7 @@ const CompOffLeave: React.FC<CompOffLeaveProps> = (props) => {
                 </TableBody>
               </Table>
             </CardContent>
-          </Card>
+          </StyledCard>
         </div>
       </div>
     </>

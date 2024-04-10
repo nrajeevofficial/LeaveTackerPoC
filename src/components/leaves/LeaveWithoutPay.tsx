@@ -49,14 +49,17 @@ const CustomCalendarTodayIcon = styled(CalendarTodayIcon)`
 const StyledTableCell = styled(MuiTableCell)`
   && {
     font-family: "Poppins", sans-serif !important;
-    /* Add other styles as needed */
   }
 `;
 
 const StyledTableRow = styled(MuiTableRow)`
   && {
-    /* Add styles as needed */
   }
+`;
+
+const StyledCard = styled(Card)`
+  text-align: center;
+  background-color: #ede7f6 !important;
 `;
 
 const LeaveWithoutPay: React.FC<LeaveWithoutPayProps> = (props) => {
@@ -71,7 +74,7 @@ const LeaveWithoutPay: React.FC<LeaveWithoutPayProps> = (props) => {
       <GlobalStyles />
       <div className="row" onClick={redirectToApplyLeave}>
         <div className="col-sm-12">
-          <Card className="text-center">
+          <StyledCard>
             <CardContent>
               <CustomTypography variant="h6" gutterBottom>
                 Leave Without Pay
@@ -94,7 +97,7 @@ const LeaveWithoutPay: React.FC<LeaveWithoutPayProps> = (props) => {
                 </TableBody>
               </Table>
             </CardContent>
-          </Card>
+          </StyledCard>
         </div>
       </div>
     </>

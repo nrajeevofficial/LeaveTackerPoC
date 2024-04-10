@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 
+// Interface for holiday
 interface Holiday {
   name: string;
   description: string;
@@ -24,7 +25,7 @@ const StyledContainer = styled(Container)`
 
 const StyledCard = styled(Card)`
   && {
-    height: 100%; /* Set the height to 100% */
+    height: 100%;
     display: flex;
     flex-direction: column;
     border-radius: 5px;
@@ -65,6 +66,7 @@ function HolidayList() {
   const [holidays, setHolidays] = useState<Holiday[]>([]);
 
   useEffect(() => {
+    // Fetch holiday data from API
     fetch("/api/holidayList")
       .then((response) => response.json())
       .then((data) => {

@@ -1,29 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import Icon from "../../assets/brand-engagement.png";
 import styled from "styled-components";
 
 function Navbar() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    const signedUpUser = localStorage.getItem("name");
-    if (signedUpUser) {
-      const firstName = signedUpUser.split(" ")[0];
-      setUserName(firstName);
-    }
-  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("signUp");
+    // Remove user ID from localStorage and navigate to login page
+    localStorage.removeItem("id");
     navigate("/");
   };
 
   // Styled components
 
+  // Styled Brand Logo image
   const BrandLogo = styled.img`
     width: 45px;
     height: 45px;
@@ -31,30 +23,36 @@ function Navbar() {
     margin-right: 20px;
   `;
 
+  // Styled AppBar with custom background color
   const StyledAppBar = styled(AppBar)`
     background-color: #455a64 !important;
   `;
 
+  // Styled Typography with custom font size and flex-grow
   const StyledTypography = styled(Typography)`
     flex-grow: 1;
     font-size: 14px;
   `;
+
   return (
     <>
       <StyledAppBar position="static">
         <Toolbar>
           <BrandLogo src={Icon} alt="Brand Logo" />
-          <StyledTypography variant="h5">Welcome! {userName}</StyledTypography>
+          <StyledTypography variant="h5">Leave Tracker App</StyledTypography>
           <div>
             <Button color="inherit" component={Link} to="/home">
               Home
             </Button>
+
             <Button color="inherit" component={Link} to="/applyleave">
               Apply Leave
             </Button>
+
             <Button color="inherit" component={Link} to="/holidaylist">
               Holidays
             </Button>
+
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>

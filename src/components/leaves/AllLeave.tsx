@@ -5,20 +5,18 @@ import CasualLeave from "./CasualLeave";
 import CompOffLeave from "./CompoOffLeave";
 import LeaveWithoutPay from "./LeaveWithoutPay";
 
+// Interface for LeaveType
 interface LeaveType {
   available: number;
   booked: number;
 }
 
-//styled compoenent css
-
-
+// Styled components CSS
 const LeavesContainer = styled.div`
   margin-top: 5%;
   width: 38%;
   margin-left: 50px;
   text-align: center;
- 
 `;
 
 const LeavesWrapper = styled.div`
@@ -29,6 +27,7 @@ const LeavesWrapper = styled.div`
 `;
 
 function Leaves() {
+  // State variables for different types of leaves
   const [casualLeave, setCasualLeaves] = useState<LeaveType>({
     available: 0,
     booked: 0,
@@ -43,9 +42,11 @@ function Leaves() {
   });
 
   useEffect(() => {
-    fetch("/api/availableLeave")
+    // Fetch available leaves data from API
+    fetch(`/api/availableLeave?id=` + localStorage.getItem("id"))
       .then((response) => response.json())
       .then((data) => {
+        // Extract and update state for each type of leave
         const casualLeaveData = data.availableLeaves.find(
           (leave: { name: string }) => leave.name === "Casual Leave"
         );
@@ -83,17 +84,14 @@ function Leaves() {
 
   return (
     <>
-    <LeavesContainer>
-        
-      <LeavesWrapper>
-      
-        <CasualLeave casualLeave={casualLeave} />
-        <CompOffLeave compOffLeave={compOffLeave} />
-        <LeaveWithoutPay leaveWithoutPay={leaveWithoutPay} />
-      </LeavesWrapper>
-    </LeavesContainer>
+      <LeavesContainer>
+        <LeavesWrapper>
+          <CasualLeave casualLeave={casualLeave} />
+          <CompOffLeave compOffLeave={compOffLeave} />
+          <LeaveWithoutPay leaveWithoutPay={leaveWithoutPay} />
+        </LeavesWrapper>
+      </LeavesContainer>
     </>
-   
   );
 }
 

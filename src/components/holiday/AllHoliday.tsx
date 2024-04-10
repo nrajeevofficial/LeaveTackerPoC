@@ -15,22 +15,29 @@ import styled from "styled-components";
 import { ButtonHTMLAttributes } from "react";
 import { createGlobalStyle } from "styled-components";
 
-//styled css
+// Global styles
 const GlobalStyles = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 `;
 
+// Styled components
 const StyledDiv = styled.div`
   margin-left: 50px;
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
   width: 95%;
   margin-top: 50px;
+  background-color: #ede7f6;
 `;
 
-const StyledHeaderWrapper = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+`;
+
+const StyledHeaderWrapper = styled.div`
   font-family: "Poppins", sans-serif !important;
   font-size: 1.5rem !important;
 `;
@@ -42,6 +49,24 @@ const StyledTableCell = styled(TableCell)`
   font-size: 1rem !important;
 `;
 
+const HoverableTableBody = styled(TableBody)`
+  tr:hover {
+    background-color: #bdbdbd;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  margin: 3px;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+  text-transform: capitalize;
+`;
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+// Interface for holiday and leave
 interface Holiday {
   name: string;
   date: string;
@@ -55,10 +80,6 @@ interface Leave {
   reason: string;
 }
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  active?: boolean;
-}
-
 function AllHoliday() {
   const [holidays, setHolidays] = useState<Holiday[] | null>(null);
   const [showUpcoming, setShowUpcoming] = useState<boolean>(false);
@@ -67,8 +88,9 @@ function AllHoliday() {
   const [activeButton, setActiveButton] = useState<string>("All");
 
   const location = useLocation();
-  const allLeave: boolean = location.pathname === "/apply-leave";
+  const allLeave: boolean = location.pathname === "/applyLeave";
 
+  // Fetch holidays on component mount
   useEffect(() => {
     fetch("/api/holidays")
       .then((res) => res.json())
@@ -76,6 +98,7 @@ function AllHoliday() {
       .catch((err) => console.log(err));
   }, []);
 
+  // Handle button click
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName);
     switch (buttonName) {
@@ -93,6 +116,7 @@ function AllHoliday() {
     }
   };
 
+  // Filter upcoming holidays
   const filterUpcomingHolidays = () => {
     const currentDate = new Date();
     const upcomingHolidays = holidays?.filter((holiday) => {
@@ -105,6 +129,7 @@ function AllHoliday() {
     setShowHistory(false);
   };
 
+  // Reset holidays
   const resetHolidays = () => {
     fetch("/api/holidays")
       .then((res) => res.json())
@@ -114,8 +139,9 @@ function AllHoliday() {
     setShowHistory(false);
   };
 
+  // Fetch leave history
   const fetchLeaveHistory = () => {
-    fetch("/api/leaveHistory")
+    fetch(`/api/leaveHistory?id=` + localStorage.getItem("id"))
       .then((res) => res.json())
       .then((json) => setLeaveHistory(json.leaveHistory))
       .catch((err) => console.log(err));
@@ -128,54 +154,45 @@ function AllHoliday() {
         <>
           <GlobalStyles />
           <StyledDiv className="mt-4">
-            <div className="d-flex align-items-center justify-content-between border-bottom border-white">
+            <StyledContainer>
               <StyledHeaderWrapper>
                 <h4>All Holidays</h4>
-                <div>
-                  <Button
-                    color="inherit"
-                    sx={{
-                      bgcolor: activeButton === "All" ? "white" : "white",
-                      color: activeButton === "All" ? "#4b89dc" : "darkwhite",
-                      margin: "3px",
-                      boxShadow: "0 0 4px 0 rgba(0, 0, 0, 0.2)",
-                      textTransform: "capitalize",
-                    }}
-                    onClick={() => handleButtonClick("All")}
-                  >
-                    All
-                  </Button>
-                  <Button
-                    color="inherit"
-                    sx={{
-                      bgcolor: activeButton === "Upcoming" ? "white" : "white",
-                      color:
-                        activeButton === "Upcoming" ? "#4b89dc" : "darkwhite",
-                      margin: "3px",
-                      boxShadow: "0 0 4px 0 rgba(0, 0, 0, 0.2)",
-                      textTransform: "capitalize",
-                    }}
-                    onClick={() => handleButtonClick("Upcoming")}
-                  >
-                    Upcoming
-                  </Button>
-                  <Button
-                    color="inherit"
-                    sx={{
-                      bgcolor: activeButton === "History" ? "white" : "white",
-                      color:
-                        activeButton === "History" ? "#4b89dc" : "darkwhite",
-                      margin: "3px",
-                      boxShadow: "0 0 4px 0 rgba(0, 0, 0, 0.2)",
-                      textTransform: "capitalize",
-                    }}
-                    onClick={() => handleButtonClick("History")}
-                  >
-                    History
-                  </Button>
-                </div>
               </StyledHeaderWrapper>
-            </div>
+              <StyledButtonContainer>
+                <StyledButton
+                  color="inherit"
+                  sx={{
+                    bgcolor: activeButton === "All" ? "white" : "white",
+                    color: activeButton === "All" ? "#4b89dc" : "darkwhite",
+                  }}
+                  onClick={() => handleButtonClick("All")}
+                >
+                  All
+                </StyledButton>
+                <StyledButton
+                  color="inherit"
+                  sx={{
+                    bgcolor: activeButton === "Upcoming" ? "white" : "white",
+                    color:
+                      activeButton === "Upcoming" ? "#4b89dc" : "darkwhite",
+                  }}
+                  onClick={() => handleButtonClick("Upcoming")}
+                >
+                  Upcoming
+                </StyledButton>
+                <StyledButton
+                  color="inherit"
+                  sx={{
+                    bgcolor: activeButton === "History" ? "white" : "white",
+                    color: activeButton === "History" ? "#4b89dc" : "darkwhite",
+                  }}
+                  onClick={() => handleButtonClick("History")}
+                >
+                  History
+                </StyledButton>
+              </StyledButtonContainer>
+            </StyledContainer>
+            {/* Render leave history */}
             {showHistory && (
               <TableContainer component={Paper} className="mt-4">
                 <Table>
@@ -186,7 +203,7 @@ function AllHoliday() {
                       <StyledTableCell>Reason</StyledTableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
+                  <HoverableTableBody>
                     {leaveHistory.map((leave, index) => (
                       <TableRow key={index}>
                         <StyledTableCell>{leave.type}</StyledTableCell>
@@ -196,10 +213,11 @@ function AllHoliday() {
                         <StyledTableCell>{leave.reason}</StyledTableCell>
                       </TableRow>
                     ))}
-                  </TableBody>
+                  </HoverableTableBody>
                 </Table>
               </TableContainer>
             )}
+            {/* Render holidays */}
             <div>
               {holidays && !showHistory && (
                 <TableContainer component={Paper} className="mt-4">
@@ -212,7 +230,7 @@ function AllHoliday() {
                         <StyledTableCell>Shift</StyledTableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <HoverableTableBody>
                       {holidays.map((holiday, index) => (
                         <TableRow key={index}>
                           <StyledTableCell>{holiday.name}</StyledTableCell>
@@ -223,6 +241,7 @@ function AllHoliday() {
                           <StyledTableCell>{holiday.shifts}</StyledTableCell>
                         </TableRow>
                       ))}
+                      {/* Show message if no upcoming holidays */}
                       {showUpcoming && !holidays.length && !showHistory && (
                         <TableRow>
                           <StyledTableCell colSpan={4}>
@@ -230,7 +249,7 @@ function AllHoliday() {
                           </StyledTableCell>
                         </TableRow>
                       )}
-                    </TableBody>
+                    </HoverableTableBody>
                   </Table>
                 </TableContainer>
               )}

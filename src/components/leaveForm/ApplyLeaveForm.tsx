@@ -17,7 +17,14 @@ import Navbar from "../navbar/Navbar";
 import { SelectChangeEvent } from "@mui/material/Select";
 import styled from "styled-components";
 
-//styled components css
+// Styled components CSS
+const StyledContainer = styled(Container)`
+  max-width: 600px;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background-color: #ede7f6;
+`;
+
 const StyledDiv = styled.div`
   text-align: center;
   font-size: 18px;
@@ -28,6 +35,17 @@ const StyledHeader = styled.h4`
   font-weight: 500;
 `;
 
+const StyledTextField = styled(TextField)`
+  width: 100%;
+  background-color: white;
+`;
+
+const StyledFormControl = styled(FormControl)`
+  width: 100%;
+  background-color: white;
+`;
+
+// Interface for form data
 interface FormData {
   employeeName: string;
   leaveType: string;
@@ -50,6 +68,7 @@ function ApplyLeave() {
     teamEmail: "",
   });
 
+  // Function to handle form field changes
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -58,49 +77,56 @@ function ApplyLeave() {
     }));
   };
 
+  // Function to handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch("api/updateLeave", {
+      // Update leave API call
+      const response = await fetch("api/leaveInformation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          id: localStorage.getItem("id"),
           name: formData.leaveType,
           booked: getDaysDifference(formData.startDate, formData.endDate),
         }),
       });
       const data = await response.json();
-      console.log("Updated leave data:", data);
     } catch (error) {
       console.error("Error updating leave:", error);
     }
 
     try {
+      // Update leave history API call
       const response = await fetch("api/updateLeaveHistory", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          employeeName: formData.employeeName,
-          type: formData.leaveType,
-          startDate: formatDate(formData.startDate),
-          endDate: formatDate(formData.endDate),
-          reason: formData.reason,
-          teamEmail: formData.teamEmail,
+          id: localStorage.getItem("id"),
+          leaveData: {
+            employeeName: formData.employeeName,
+            type: formData.leaveType,
+            startDate: formatDate(formData.startDate),
+            endDate: formatDate(formData.endDate),
+            reason: formData.reason,
+            teamEmail: formData.teamEmail,
+          },
         }),
       });
       const data = await response.json();
-      // console.log("Updated leave data:", data);
     } catch (error) {
       console.error("Error updating leave history:", error);
     }
 
+    // Navigate to home page
     navigate("/home", { replace: true });
   };
 
+  // Function to format date
   const formatDate = (dateString: string) => {
     if (dateString) {
       const parsedDate = parseISO(dateString);
@@ -116,6 +142,7 @@ function ApplyLeave() {
     return "";
   };
 
+  // Function to calculate days difference between two dates
   function getDaysDifference(dateString1: string, dateString2: string) {
     const date1 = new Date(dateString1);
     const date2 = new Date(dateString2);
@@ -135,12 +162,9 @@ function ApplyLeave() {
         <StyledHeader>Leave Form</StyledHeader>
       </StyledDiv>
 
-      <Container
-        maxWidth="sm"
-        sx={{ boxShadow: "0 0 4px 0 rgba(0, 0, 0, 0.2)", borderRadius: "10px" }}
-      >
+      <StyledContainer maxWidth="sm">
         <form onSubmit={handleSubmit}>
-          <TextField
+          <StyledTextField
             fullWidth
             label="Employee Name"
             name="employeeName"
@@ -150,7 +174,13 @@ function ApplyLeave() {
             variant="outlined"
             required
           />
-          <FormControl fullWidth margin="normal" variant="outlined" required>
+
+          <StyledFormControl
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            required
+          >
             <InputLabel id="leaveType-label">Leave Type</InputLabel>
             <Select
               labelId="leaveType-label"
@@ -165,8 +195,9 @@ function ApplyLeave() {
               <MenuItem value="Compensatory Off">Compensatory Off</MenuItem>
               <MenuItem value="Leave Without Pay">Leave Without Pay</MenuItem>
             </Select>
-          </FormControl>
-          <TextField
+          </StyledFormControl>
+
+          <StyledTextField
             fullWidth
             label="Start Date"
             type="date"
@@ -181,7 +212,7 @@ function ApplyLeave() {
             InputLabelProps={{ shrink: true }}
           />
 
-          <TextField
+          <StyledTextField
             fullWidth
             label="End Date"
             type="date"
@@ -195,7 +226,8 @@ function ApplyLeave() {
             required
             InputLabelProps={{ shrink: true }}
           />
-          <TextField
+
+          <StyledTextField
             fullWidth
             label="Team Email ID"
             name="teamEmail"
@@ -208,7 +240,8 @@ function ApplyLeave() {
             type="email"
             required
           />
-          <TextField
+
+          <StyledTextField
             fullWidth
             label="Reason for Leave"
             multiline
@@ -232,7 +265,7 @@ function ApplyLeave() {
             Submit
           </Button>
         </form>
-      </Container>
+      </StyledContainer>
     </>
   );
 }

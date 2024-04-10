@@ -30,7 +30,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 const CustomTypography = styled(Typography)`
   && {
-    margin-bottom: 8px; /* Assuming you want some bottom margin */
+    margin-bottom: 8px;
     font-family: "Poppins", sans-serif !important;
     font-size: 1rem !important;
   }
@@ -46,14 +46,17 @@ const CustomCalendarTodayIcon = styled(CalendarTodayIcon)`
 const StyledTableCell = styled(MuiTableCell)`
   && {
     font-family: "Poppins", sans-serif !important;
-    /* Add other styles as needed */
   }
 `;
 
 const StyledTableRow = styled(MuiTableRow)`
   && {
-    /* Add styles as needed */
   }
+`;
+
+const StyledCard = styled(Card)`
+  text-align: center;
+  background-color: #ede7f6 !important;
 `;
 
 const CasualLeave: React.FC<CasualLeaveProps> = (props) => {
@@ -68,7 +71,7 @@ const CasualLeave: React.FC<CasualLeaveProps> = (props) => {
       <GlobalStyles />
       <div className="row" onClick={redirectToApplyLeave}>
         <div className="col-sm-12">
-          <Card className="text-center">
+          <StyledCard>
             <CardContent>
               <CustomTypography variant="h6" gutterBottom>
                 Casual Leave
@@ -91,7 +94,7 @@ const CasualLeave: React.FC<CasualLeaveProps> = (props) => {
                 </TableBody>
               </Table>
             </CardContent>
-          </Card>
+          </StyledCard>
         </div>
       </div>
     </>
