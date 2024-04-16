@@ -28,8 +28,8 @@ const Title = styled.h2`
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 1rem;
-  line-height: 50px;
+  margin-bottom: 2rem;
+  position: relative;
 `;
 
 const Input = styled.input`
@@ -41,6 +41,10 @@ const Input = styled.input`
 
 const ErrorMessage = styled.span`
   color: red;
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  font-size: 12px !important;
 `;
 
 const Button = styled.button`
@@ -69,6 +73,7 @@ const SignUp: React.FC = () => {
   const [mobileNumberError, setMobileNumberError] = useState<string>("");
 
   const handleClick = () => {
+    // Reset all error messages
     setFirstNameError("");
     setLastNameError("");
     setEmailError("");
@@ -106,12 +111,29 @@ const SignUp: React.FC = () => {
     // Password validation
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-    if (!passwordRegex.test(userData.password)) {
+
+    if (!userData.password) {
+      setPasswordError("Please enter the password.");
+      return;
+    }
+
+    if (userData.password.length < 6) {
+      setPasswordError("Password must be 6 characters long.");
+      return;
+    }
+
+    if (!/(?=.*[A-Z])/.test(userData.password)) {
+      setPasswordError("Password must contain at least one uppercase letter.");
+      return;
+    }
+
+    if (!/(?=.*\d)(?=.*[@$!%*?&])/.test(userData.password)) {
       setPasswordError(
-        "Password must be 6 characters long and contain at least one uppercase letter, one lowercase letter, one numeric digit, and one special symbol."
+        "Password must contain at least one number and one special symbol."
       );
       return;
     }
+
     // Confirm Password Validation
     if (userData.password !== userData.confirmPassword) {
       setConfirmPasswordError("Passwords do not match.");

@@ -12,7 +12,6 @@ import {
 import { parseISO, format } from "date-fns";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { ButtonHTMLAttributes } from "react";
 import { createGlobalStyle } from "styled-components";
 
 // Global styles
@@ -116,16 +115,34 @@ function AllHoliday() {
     }
   };
 
-  // Filter upcoming holidays
   const filterUpcomingHolidays = () => {
     const currentDate = new Date();
-    const upcomingHolidays = holidays?.filter((holiday) => {
-      const holidayDate = new Date(holiday.date);
-      return holidayDate > currentDate;
+
+    // Filter upcoming holidays
+    const upcomingHolidays = holidays?.filter((holiday): holiday is Holiday => {
+      return "date" in holiday && new Date(holiday.date) > currentDate;
     });
 
-    setHolidays(upcomingHolidays || []);
-    setShowUpcoming((upcomingHolidays || []).length > 0);
+    // Filter upcoming leave history
+    const upcomingLeaveHistory = leaveHistory?.filter(
+      (leave): leave is Leave => {
+        return "startDate" in leave && new Date(leave.startDate) > currentDate;
+      }
+    );
+
+    // Combine upcoming holidays and leave history
+    const combinedData: (Holiday | Leave)[] = [
+      ...(upcomingHolidays || []),
+      ...(upcomingLeaveHistory || []),
+    ];
+
+    // Filter out Leave objects
+    const filteredHolidays: Holiday[] = combinedData
+      .filter((item): item is Holiday => "name" in item)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    setHolidays(filteredHolidays);
+    setShowUpcoming(filteredHolidays.length > 0);
     setShowHistory(false);
   };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import {
   Container,
@@ -63,7 +64,17 @@ const StyledTypographyDate = styled(Typography)`
 `;
 
 function HolidayList() {
+  const navigate = useNavigate();
   const [holidays, setHolidays] = useState<Holiday[]>([]);
+
+  const id = localStorage.getItem("id");
+
+  useEffect(() => {
+    // If id is not present, redirect to "/"
+    if (!id) {
+      navigate("/");
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
     // Fetch holiday data from API

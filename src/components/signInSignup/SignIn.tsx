@@ -28,7 +28,8 @@ const Title = styled.h2`
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  position: relative;
 `;
 
 const Input = styled.input`
@@ -40,6 +41,10 @@ const Input = styled.input`
 
 const ErrorMessage = styled.span`
   color: red;
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  font-size: 12px !important;
 `;
 
 const Button = styled.button`
@@ -61,16 +66,6 @@ const ButtonContainer = styled.div`
 
 function SignIn() {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState<string>("");
-  useEffect(() => {
-    // Get user's first name from localStorage and set it as userName
-    const signedUpUser = localStorage.getItem("name");
-    if (signedUpUser) {
-      const firstName = signedUpUser.split(" ")[0];
-      setUserName(firstName);
-    }
-  }, []);
-
   const email = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
   const [emailError, setEmailError] = useState<string>("");
@@ -93,8 +88,8 @@ function SignIn() {
     }
 
     // Password validation
-    if (passwordValue.length < 6) {
-      setPasswordError("Password must be at least 6 characters long.");
+    if (!passwordValue) {
+      setPasswordError("Please enter the correct password");
       return;
     }
 

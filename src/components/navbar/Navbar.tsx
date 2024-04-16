@@ -1,11 +1,30 @@
-import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import Icon from "../../assets/brand-engagement.png";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Navbar() {
   const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Fetch user data from the server
+        const response = await axios.get("/api/userData", {
+          params: { id: localStorage.getItem("id") },
+        });
+        // Set the first name from the fetched user data
+        setFirstName(response.data.userData.firstName);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleLogout = () => {
     // Remove user ID from localStorage and navigate to login page
@@ -39,7 +58,10 @@ function Navbar() {
       <StyledAppBar position="static">
         <Toolbar>
           <BrandLogo src={Icon} alt="Brand Logo" />
-          <StyledTypography variant="h5">Leave Tracker App</StyledTypography>
+          <StyledTypography variant="h5">
+            {/* Display Welcome message along with first name */}
+            Welcome, {firstName}!
+          </StyledTypography>
           <div>
             <Button color="inherit" component={Link} to="/home">
               Home

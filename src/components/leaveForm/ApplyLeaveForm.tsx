@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -16,7 +16,9 @@ import { parseISO, format } from "date-fns";
 import Navbar from "../navbar/Navbar";
 import { SelectChangeEvent } from "@mui/material/Select";
 import styled from "styled-components";
+import axios from "axios";
 
+// Styled components CSS
 // Styled components CSS
 const StyledContainer = styled(Container)`
   max-width: 600px;
@@ -67,6 +69,38 @@ function ApplyLeave() {
     reason: "",
     teamEmail: "",
   });
+
+  const id = localStorage.getItem("id");
+
+  useEffect(() => {
+    // If id is not present, redirect to "/"
+    if (!id) {
+      navigate("/");
+    }
+  }, [id, navigate]);
+
+  useEffect(() => {
+    // Function to fetch user data and set the full name
+    const fetchUserData = async () => {
+      try {
+        // Fetch user data from the server
+        const response = await axios.get("/api/userData", {
+          params: { id: localStorage.getItem("id") },
+        });
+        // Set the full name from the fetched user data
+        const { firstName, lastName } = response.data.userData;
+        setFormData((prevData) => ({
+          ...prevData,
+          employeeName: `${firstName} ${lastName}`,
+          teamEmail: response.data.userData.email,
+        }));
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   // Function to handle form field changes
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -229,28 +263,21 @@ function ApplyLeave() {
 
           <StyledTextField
             fullWidth
-            label="Team Email ID"
-            name="teamEmail"
-            value={formData.teamEmail}
-            onChange={(e) =>
-              handleChange(e as React.ChangeEvent<HTMLInputElement>)
-            }
+            label="Reason"
+            name="reason"
+            value={formData.reason}
+            onChange={(e) => handleChange(e as SelectChangeEvent<string>)}
             margin="normal"
             variant="outlined"
-            type="email"
             required
           />
 
           <StyledTextField
             fullWidth
-            label="Reason for Leave"
-            multiline
-            rows={4}
-            name="reason"
-            value={formData.reason}
-            onChange={(e) =>
-              handleChange(e as React.ChangeEvent<HTMLInputElement>)
-            }
+            label="Team Email"
+            name="teamEmail"
+            value={formData.teamEmail}
+            onChange={(e) => handleChange(e as SelectChangeEvent<string>)}
             margin="normal"
             variant="outlined"
             required
@@ -260,7 +287,7 @@ function ApplyLeave() {
             type="submit"
             variant="contained"
             color="primary"
-            sx={{ mb: 1 }}
+            size="large"
           >
             Submit
           </Button>

@@ -57,6 +57,12 @@ const StyledTableRow = styled(MuiTableRow)`
 const StyledCard = styled(Card)`
   text-align: center;
   background-color: #ede7f6 !important;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+
+  &:hover {
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const CasualLeave: React.FC<CasualLeaveProps> = (props) => {

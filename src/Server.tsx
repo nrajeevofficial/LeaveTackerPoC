@@ -1,4 +1,3 @@
-import { Console, log } from "console";
 import { createServer, Response } from "miragejs";
 
 type Holiday = {
@@ -52,95 +51,96 @@ interface UserData {
   leaveHistory: LeaveHistoryEntry[];
 }
 
+const holidays = [
+  {
+    id: 1,
+    name: "New Year",
+    date: new Date("2024-01-01"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 2,
+    name: "Republic Day",
+    date: new Date("2024-01-26"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 3,
+    name: "Holi",
+    date: new Date("2024-03-25"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 4,
+    name: "Gudi Padwa",
+    date: new Date("2024-04-09"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 5,
+    name: "Maharashtra Day",
+    date: new Date("2024-05-01"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 6,
+    name: "Bakri Eid / Eid al Adha",
+    date: new Date("2024-06-17"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 7,
+    name: "Independence Day",
+    date: new Date("2024-08-15"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 8,
+    name: "Gandhi Jayanti",
+    date: new Date("2024-10-02"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 9,
+    name: "Diwali",
+    date: new Date("2024-10-31"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 10,
+    name: "Diwali",
+    date: new Date("2024-11-01"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+  {
+    id: 11,
+    name: "Christmas",
+    date: new Date("2024-12-25"),
+    location: "All Locations",
+    shifts: "All Shifts",
+  },
+];
 createServer({
   routes() {
     this.namespace = "api";
 
     this.get("/holidays", () => {
       return {
-        holidays: [
-          {
-            id: 1,
-            name: "New Year",
-            date: new Date("2024-01-01"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 2,
-            name: "Republic Day",
-            date: new Date("2024-01-26"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 3,
-            name: "Holi",
-            date: new Date("2024-03-25"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 4,
-            name: "Gudi Padwa",
-            date: new Date("2024-04-09"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 5,
-            name: "Maharashtra Day",
-            date: new Date("2024-05-01"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 6,
-            name: "Bakri Eid / Eid al Adha",
-            date: new Date("2024-06-17"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 7,
-            name: "Independence Day",
-            date: new Date("2024-08-15"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 8,
-            name: "Gandhi Jayanti",
-            date: new Date("2024-10-02"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 9,
-            name: "Diwali",
-            date: new Date("2024-10-31"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 10,
-            name: "Diwali",
-            date: new Date("2024-11-01"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-          {
-            id: 11,
-            name: "Christmas",
-            date: new Date("2024-12-25"),
-            location: "All Locations",
-            shifts: "All Shifts",
-          },
-        ],
+        holidays,
       };
     });
 
-    let userDataArray: UserData[] = []; // when new sign . stores the user data inside it.
+    let userDataArray: UserData[] = []; // when new sign up, stores the user data inside it.
 
     // API endpoint to fetch available leave data
     this.get("/availableLeave", (schema, request) => {
@@ -318,6 +318,23 @@ createServer({
       };
     });
 
+    // new api to fetch user data based on user ID
+
+    this.get("/userData", (schema, request) => {
+      const { id } = request.queryParams;
+
+      // Find the user data with the matching ID
+      const userData = userDataArray.find((user) => user.id === id);
+
+      if (!userData) {
+        return new Response(404, {}, { error: "User not found." });
+      }
+
+      return {
+        userData,
+      };
+    });
+
     this.post("/signUp", (schema, request) => {
       let userData = JSON.parse(request.requestBody);
 
@@ -326,6 +343,11 @@ createServer({
 
       // Add the random number to the user data
       userData.id = randomNumber.toString();
+
+      // Store the first name in local storage
+      localStorage.setItem("firstName", userData.firstName);
+      localStorage.setItem("lastName", userData.lastName);
+      localStorage.setItem("email", userData.email);
 
       // Assign default leave data to the user
       userData.availableLeaves = [
@@ -347,8 +369,7 @@ createServer({
       ];
 
       // Assign default leave history data to the user
-      userData.leaveHistory = [
-      ];
+      userData.leaveHistory = [];
 
       // Validate user data
       const {
@@ -407,11 +428,18 @@ createServer({
 
       // Mobile number validation (You can add your own validation logic here)
       if (!mobileNumber) {
-        return new Response(400, {}, { error: "Please enter your mobile number." });
+        return new Response(
+          400,
+          {},
+          { error: "Please enter your mobile number." }
+        );
       } else if (mobileNumber.length !== 10) {
-        return new Response(400, {}, { error: "Mobile number should be 10 digits long." });
+        return new Response(
+          400,
+          {},
+          { error: "Mobile number should be 10 digits long." }
+        );
       }
-
 
       // Create an array of user data
       userDataArray.push(userData);
@@ -428,6 +456,7 @@ createServer({
     this.post("/signIn", (schema, request) => {
       let signInData = JSON.parse(request.requestBody);
       // Find the user data with the matching email
+      console.log(userDataArray);
       const userData = userDataArray.find(
         (userData) => userData.email === signInData.email
       );

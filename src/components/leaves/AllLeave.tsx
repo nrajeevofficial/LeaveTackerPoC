@@ -14,7 +14,7 @@ interface LeaveType {
 // Styled components CSS
 const LeavesContainer = styled.div`
   margin-top: 5%;
-  width: 38%;
+  width: 40%;
   margin-left: 50px;
   text-align: center;
 `;
